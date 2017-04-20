@@ -1,0 +1,11 @@
+{
+  "name": "legopdb",
+  "version": "1.0.0",
+  "description": "A Lego brick inventory app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}
