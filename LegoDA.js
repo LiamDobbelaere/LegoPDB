@@ -9,22 +9,28 @@ function BrickEntry(name, amount) {
 }
 
 function LegoDA() {
-    const fileName = "LegoDB.json";
-    var stock = [];
+    const fileName = "legodb.json";
+    var db = {};
 
     if (fs.existsSync(fileName)) {
-        stock = jsonfile.readFileSync("LegoDB.json");
+        db = jsonfile.readFileSync(fileName);
     } else {
-        stock.push(new BrickEntry("test", 6));
-        jsonfile.writeFileSync(fileName, stock);
+        console.error("Missing legodb.json, use the generator in preprocessing/app.js to create one, move it to the root and restart");
     }
 
-    this.getStock = function() {
-        return stock;
+    this.queryParts = function (queryString, maxItems = 10) {
+        queryString = queryString.split(" ").join("");
+
+        return db.parts.filter(function (data) {
+            if (data.name.toLowerCase().split(" ").join("").match(new RegExp(queryString, "gi")) != null) {
+                maxItems--;
+                return maxItems > 0;
+            } else return false;
+        });
     };
 
-    this.save = function() {
-        jsonfile.writeFileSync(fileName, stock);
+    this.save = function () {
+        jsonfile.writeFileSync(fileName, db);
     }
 }
 
