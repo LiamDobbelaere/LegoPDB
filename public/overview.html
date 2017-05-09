@@ -12,29 +12,29 @@
 <div id="container">
     <header>
         <h1>Lego® Parts Database</h1>
-        <h2>Login</h2>
+        <h2>Overview</h2>
     </header>
 
     <main>
-        <form class="cf">
+        <form class="cf search">
             <fieldset>
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username"/>
+                <input type="text" id="search" class="searchbox" name="search"/>
             </fieldset>
-
-            <fieldset>
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password"/>
-            </fieldset>
-
-            <input type="submit" value="Login"/>
-
-            <p class="form-links">
-                <span><a href="#">Forgot password?</a></span>
-                <span>Don't have an account? <a href="#">Sign up</a></span>
-            </p>
         </form>
 
+        <section class="gridview">
+            <a href="#"  class="add-button"></a>
+            <a href="#" class="gbrick">
+                <section class="gbrick-thumb">
+                    <span class="gbrick-amount">123456</span>
+                </section>
+                <span class="gbrick-sub">2x2</span>
+                <span class="gbrick-sub">test</span>
+            </a>
+        </section>
+
+        <a href="#" id="add-button-mobile">
+        </a>
     </main>
 
     <footer>
