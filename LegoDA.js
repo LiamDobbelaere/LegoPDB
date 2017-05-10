@@ -22,7 +22,7 @@ function LegoDA() {
         queryString = queryString.split(" ").join("");
 
         return db.parts.filter(function (data) {
-            if (data.name.toLowerCase().split(" ").join("").match(new RegExp(queryString, "gi")) != null) {
+            if (data.name.toLowerCase().split(" ").join("").match(new RegExp(queryString, "gi")) != null || queryString == "") {
                 maxItems--;
                 return maxItems > 0;
             } else return false;
@@ -36,7 +36,21 @@ function LegoDA() {
     };
 
     this.getCategories = function() {
-        return db.categories;
+        return db.categories.sort(function(a, b) {
+            var nameA = a.name.toUpperCase();
+            var nameB = b.name.toUpperCase();
+
+            if (nameA < nameB) {
+                return -1;
+            }
+
+            if (nameA > nameB) {
+                return 1;
+            }
+
+            // names must be equal
+            return 0;
+        });
     };
 
     this.save = function () {
