@@ -217,3 +217,20 @@ footer {
         line-height: 48px;
     }
 }
+
+.acitem {
+    height: 32px;
+    display: inline-block;
+    line-height: 32px;
+    padding-left: 50px;
+    background-position: left;
+    background-size: contain;
+    background-repeat: no-repeat;
+    text-align: right;
+    /*overflow: hidden;*/
+}
+
+.listcategory {
+    color: gray;
+    font-size: 10px;
+}

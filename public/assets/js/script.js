@@ -1,5 +1,22 @@
 (function() {
     $(function() {
+        var options = {
+            url: function(q) {
+                return "/search?q=" + q;
+            },
+            getValue: "name",
+            template: {
+                type: "custom",
+                method: function(value, item) {
+                    return "<span class='acitem' style='background-image: url(" + "assets/media/brickdb/" + item.id + ".jpg'>" + item.name + " <span class='listcategory'>" + item.category + "</span></span>";
+                }
+            },
+            highlightPhrase: false,
+            requestDelay: 200
+        };
+
+        $("#search").easyAutocomplete(options);
+
         updateGridview([
             {
                 name: "2x2",

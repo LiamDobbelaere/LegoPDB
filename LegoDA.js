@@ -26,7 +26,17 @@ function LegoDA() {
                 maxItems--;
                 return maxItems > 0;
             } else return false;
+        }).map(function (value, index, array) {
+            value.category = db.categories.find(function (element, index, array) {
+                return value.categoryId == element.id;
+            }).name;
+
+            return value;
         });
+    };
+
+    this.getCategories = function() {
+        return db.categories;
     };
 
     this.save = function () {
