@@ -18,11 +18,11 @@ function LegoDA() {
         console.error("Missing legodb.json, use the generator in preprocessing/app.js to create one, move it to the root and restart");
     }
 
-    this.queryParts = function (queryString, maxItems = 10) {
+    this.queryParts = function (queryString, categorySelection, maxItems = 10) {
         queryString = queryString.split(" ").join("");
 
         return db.parts.filter(function (data) {
-            if (data.name.toLowerCase().split(" ").join("").match(new RegExp(queryString, "gi")) != null || queryString == "") {
+            if (categorySelection.indexOf(data.categoryId) == -1 && data.name.toLowerCase().split(" ").join("").match(new RegExp(queryString, "gi")) != null || queryString == "") {
                 maxItems--;
                 return maxItems > 0;
             } else return false;

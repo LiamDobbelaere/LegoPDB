@@ -4,7 +4,7 @@ var categorySelection = [];
     $(function() {
         var options = {
             url: function(q) {
-                return "/search?q=" + q;
+                return "/search?q=" + q + "&c=" + JSON.stringify(categorySelection);
             },
             getValue: "name",
             template: {

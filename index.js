@@ -10,7 +10,7 @@ server.listen(80);
 app.use(express.static(__dirname + "/public"));
 
 app.get("/search", function (req, res, next) {
-    if (req.query.q) res.send(db.queryParts(req.query.q));
+    if (req.query.q) res.send(db.queryParts(req.query.q, req.query.c));
     else res.send([]);
 });
 
