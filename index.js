@@ -17,5 +17,3 @@ app.get("/search", function (req, res, next) {
 app.get("/categories", function (req, res, next) {
     res.send(db.getCategories());
 });
-
-console.log();

@@ -1,6 +1,6 @@
-(function() {
-    var categorySelection = [];
+var categorySelection = [];
 
+(function() {
     $(function() {
         var options = {
             url: function(q) {
@@ -18,6 +18,9 @@
         };
 
         $("#search").easyAutocomplete(options);
+        $("[data-popupid]").on("click", togglePopup);
+        $("#popup-categories").find(".btn-all").on("click", selectAllCategories);
+        $("#popup-categories").find(".btn-none").on("click", deselectAllCategories);
 
         updateCategories();
 
@@ -99,6 +102,10 @@
             }
         }
 
+        saveCategories();
+    }
+
+    function saveCategories() {
         localStorage.setItem("categories", JSON.stringify(categorySelection));
     }
 
@@ -128,14 +135,29 @@
         $newItem.append($brickPartNum);
 
         return $newItem;
-
-        /*<a href="#" class="gbrick">
-            <section class="gbrick-thumb">
-            <span class="gbrick-amount">123456</span>
-            </section>
-            <span class="gbrick-sub">2x2</span>
-        <span class="gbrick-sub">test</span>
-            </a>*/
     }
 
+    function togglePopup() {
+        console.log("ayy");
+
+        if ($(this).attr("data-popupmode") == "show") {
+            $($(this).attr("data-popupid")).show();
+        } else {
+            $($(this).attr("data-popupid")).hide();
+        }
+    }
+
+    function selectAllCategories() {
+        $("#popup-categories").find(".content").find("input").prop("checked", true);
+        categorySelection = [];
+        saveCategories();
+    }
+
+    function deselectAllCategories() {
+        $("#popup-categories").find(".content").find("input").prop("checked", false);
+        $.each($("#popup-categories").find(".content").find("input"), function(index, value) {
+            categorySelection.push(parseInt($(value).attr("data-category")));
+        });
+        saveCategories();
+    }
 })();

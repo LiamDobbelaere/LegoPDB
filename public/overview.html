@@ -18,13 +18,14 @@
 
     <main>
         <form class="cf search">
+            <a href="#" data-popupid="#popup-categories" data-popupmode="show">Categories..</a>
             <fieldset>
                 <input type="text" id="search" class="searchbox" name="search"/>
             </fieldset>
         </form>
 
         <section class="gridview">
-            <a href="#"  class="add-button"></a>
+            <a href="#" class="add-button"></a>
             <a href="#" class="gbrick">
                 <section class="gbrick-thumb">
                     <span class="gbrick-amount">123456</span>
@@ -38,8 +39,12 @@
         </a>
     </main>
 
-    <div class="popup" id="popup-categories">
-        <h2>Select categories</h2>
+    <div class="popup" id="popup-categories" style="display: none">
+        <div class="header">Categories
+            <a href="#" class="btn-all">All</a>
+            <a href="#" class="btn-none">None</a>
+            <a href="#" data-popupmode="hide" data-popupid="#popup-categories" class="btn-close">Close</a>
+        </div>
         <div class="content">
             <input type="checkbox" id="name" name="name"/>
             <label for="name">Name</label>

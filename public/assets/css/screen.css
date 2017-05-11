@@ -100,6 +100,11 @@ footer {
     width: 100%;
 }
 
+.search a {
+    margin-bottom: 8px;
+    display: block;
+}
+
 .gridview {
     max-width: 800px;
     margin-left: auto;
@@ -227,13 +232,26 @@ footer {
     overflow-y: scroll;
 }
 
-.popup h2 {
+.popup .header {
     background-color: #A00;
     height: 48px;
     color: white;
     line-height: 48px;
     font-weight: bold;
     border-bottom: 1px solid black;
+    padding-left: 8px;
+}
+
+.popup a {
+    background-color: white;
+    margin-left: 8px;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    padding-left: 4px;
+    padding-right: 4px;
+    width: 42px;
+    text-align: center;
 }
 
 input[type=checkbox]:checked + label {
