@@ -13,6 +13,11 @@ var categorySelection = [];
                     return "<span class='acitem' style='background-image: url(" + "assets/media/brickdb/" + item.id + ".jpg'>" + item.name + " <span class='listcategory'>" + item.category + "</span></span>";
                 }
             },
+            list: {
+                onClickEvent: function() {
+                    console.log($("#search").getSelectedItemData());
+                }
+            },
             highlightPhrase: false,
             requestDelay: 200
         };

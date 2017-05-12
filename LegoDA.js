@@ -19,10 +19,12 @@ function LegoDA() {
     }
 
     this.queryParts = function (queryString, categorySelection, maxItems = 10) {
-        queryString = queryString.split(" ").join("");
+        queryString = queryString.split(" ").join(".*?");
 
         return db.parts.filter(function (data) {
-            if (categorySelection.indexOf(data.categoryId) == -1 && data.name.toLowerCase().split(" ").join("").match(new RegExp(queryString, "gi")) != null || queryString == "") {
+            if (categorySelection.indexOf(data.categoryId) == -1
+                && data.name.toLowerCase().split(" ").join("").match(new RegExp(queryString, "gi")) != null
+                || data.id == queryString) {
                 maxItems--;
                 return maxItems > 0;
             } else return false;
