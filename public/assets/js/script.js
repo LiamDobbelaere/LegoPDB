@@ -1,6 +1,8 @@
 var categorySelection = [];
 
 (function() {
+    var loadedColors = [];
+
     $(function() {
         var options = {
             url: function(q) {
@@ -31,6 +33,7 @@ var categorySelection = [];
         };
 
         $("#search").easyAutocomplete(options);
+        updateColorpickers();
         $("[data-popupid]").on("click", togglePopup);
         $("#popup-categories").find(".btn-all").on("click", selectAllCategories);
         $("#popup-categories").find(".btn-none").on("click", deselectAllCategories);
@@ -151,8 +154,6 @@ var categorySelection = [];
     }
 
     function togglePopup() {
-        console.log("ayy");
-
         if ($(this).attr("data-popupmode") == "show") {
             $($(this).attr("data-popupid")).show();
         } else {
@@ -172,5 +173,48 @@ var categorySelection = [];
             categorySelection.push(parseInt($(value).attr("data-category")));
         });
         saveCategories();
+    }
+
+    function updateColorpickers() {
+        $.ajax({
+            method: "GET",
+            url: "/colors"
+        }).done(function (data) {
+            var colorIds = [];
+            var colorValues = [];
+
+            loadedColors = data;
+
+            data.forEach(function(item) {
+                colorIds.push(item.id);
+
+                if (item.transparent) {
+                    colorValues.push("#ac" + item.hex.substring(1));
+                } else {
+                    colorValues.push(item.hex);
+                }
+            });
+
+            $(".lego-color-picker").spectrum({
+                showAlpha: true,
+                showPalette: true,
+                showPaletteOnly: true,
+                allowEmpty: false,
+                preferredFormat: "hex",
+                color: colorValues[0],
+                palette: [colorValues],
+                change: function(color) {
+                    loadedColors.forEach(function(item) {
+                        var transparentMatch = (color._a < 1 && item.transparent) ||  (color._a > 0.99 && !item.transparent);
+
+                        if (item.hex.toLowerCase() == color.toHexString().toLowerCase() && transparentMatch) {
+                            console.log(item.name);
+                        }
+                    });
+                }
+            });
+
+            console.log($(".lego-color-picker").spectrum("get"));
+        });
     }
 })();

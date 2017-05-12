@@ -17,3 +17,7 @@ app.get("/search", function (req, res, next) {
 app.get("/categories", function (req, res, next) {
     res.send(db.getCategories());
 });
+
+app.get("/colors", function(req, res, next) {
+    res.send(db.getColors());
+});

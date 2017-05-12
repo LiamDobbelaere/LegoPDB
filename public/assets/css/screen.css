@@ -63,7 +63,6 @@ form label {
 
 form input {
     display: inline-block;
-    width: 158px;
     float: right;
     margin-bottom: 8px;
     border: 1px solid black;
@@ -157,8 +156,9 @@ footer {
 .gridview a .gbrick-thumb {
     width: 100%;
     height: 100px;
-    background-image: url("../media/brick_placeholder.png");
-    background-size: cover;
+    /*background-image: url("../media/brick_placeholder.png");*/
+    background-image: url("../media/brickdb/3003.jpg");
+    background-size: contain;
     background-repeat: no-repeat;
     position: relative;
 }
@@ -179,10 +179,12 @@ footer {
     padding: 5px;
     font-size: 14px;
     right: 0;
-    color: #A00;
+    /*color: #A00;*/
     font-weight: bold;
-    text-shadow: 1px 1px 0px white;
-    background-color: rgba(0, 0, 0, 0.25);
+    /*text-shadow: 1px 1px 0px white;*/
+    /*background-color: rgba(0, 0, 0, 0.25);*/
+    color: white;
+    text-shadow: -1px 0 black, 1px 0 black, -1px -1px black, -1px 1px black, 1px -1px black, 1px 1px black, 0 1px black, 0 -1px black;
 }
 
 .gridview a .gbrick-sub:last-child {
@@ -210,7 +212,7 @@ footer {
 .listcategory, .listpartid {
     display: inline-block;
     color: gray;
-    font-size: 10px;
+    font-size: 11px;
     line-height: normal;
     height: auto;
     margin-left: auto;
@@ -219,6 +221,10 @@ footer {
 
 .listpartid {
     color: #A00;
+}
+
+#popup-categories {
+    z-index: 100;
 }
 
 .popup {
@@ -240,6 +246,8 @@ footer {
     height: 300px;
     overflow-y: scroll;
 }
+
+
 
 .popup .header {
     background-color: #A00;
@@ -263,6 +271,15 @@ footer {
     text-align: center;
 }
 
+.popup .content a {
+    background-color: transparent;
+    margin-left: 0;
+    padding: 0;
+    width: auto;
+    text-align: left;
+    text-decoration: underline;
+}
+
 input[type=checkbox]:checked + label {
     color: #A00;
     font-style: normal;
@@ -270,6 +287,14 @@ input[type=checkbox]:checked + label {
 
 input[type=checkbox] + label {
     font-style: italic;
+}
+
+.btn-close {
+    float: right;
+}
+
+#popup-addpart input, #popup-addpart form {
+    width: 230px;
 }
 
 @media screen and (min-width: 415px) {
