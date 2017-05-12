@@ -203,13 +203,22 @@ footer {
     background-position: left;
     background-size: contain;
     background-repeat: no-repeat;
-    text-align: right;
+    text-align: left;
     /*overflow: hidden;*/
 }
 
-.listcategory {
+.listcategory, .listpartid {
+    display: inline-block;
     color: gray;
     font-size: 10px;
+    line-height: normal;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.listpartid {
+    color: #A00;
 }
 
 .popup {

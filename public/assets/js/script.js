@@ -10,13 +10,15 @@ var categorySelection = [];
             template: {
                 type: "custom",
                 method: function(value, item) {
-                    return "<span class='acitem' style='background-image: url(" + "assets/media/brickdb/" + item.id + ".jpg'>" + item.name + " <span class='listcategory'>" + item.category + "</span></span>";
+                    return "<span class='acitem' style='background-image: url(" + "assets/media/brickdb/" + item.id + ".jpg'>"
+                        + item.name + " <span class='listpartid'>(" + item.id + ")</span>" + " <span class='listcategory'>" + item.category + "</span></span>";
                 }
             },
             list: {
                 onClickEvent: function() {
                     console.log($("#search").getSelectedItemData());
-                }
+                },
+                maxNumberOfElements: 10
             },
             highlightPhrase: false,
             requestDelay: 200
