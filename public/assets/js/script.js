@@ -10,7 +10,13 @@ var categorySelection = [];
             template: {
                 type: "custom",
                 method: function(value, item) {
-                    return "<span class='acitem' style='background-image: url(" + "assets/media/brickdb/" + item.id + ".jpg'>"
+                    var backgroundStyle = "url(" + "assets/media/brickdb/" + item.id + ".jpg)";
+
+                    if (!item.hasImage) {
+                        backgroundStyle = ""; //Prevent spamming get requests for images that don't exist
+                    }
+
+                    return "<span class='acitem' style='background-image:" + backgroundStyle + "'>"
                         + item.name + " <span class='listpartid'>(" + item.id + ")</span>" + " <span class='listcategory'>" + item.category + "</span></span>";
                 }
             },

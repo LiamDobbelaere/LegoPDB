@@ -10,6 +10,7 @@ function BrickEntry(name, amount) {
 
 function LegoDA() {
     const fileName = "legodb.json";
+    const imageDir = "public/assets/media/brickdb/";
     var db = {};
 
     if (fs.existsSync(fileName)) {
@@ -32,6 +33,8 @@ function LegoDA() {
             value.category = db.categories.find(function (element, index, array) {
                 return value.categoryId == element.id;
             }).name;
+
+            value.hasImage = fs.existsSync(imageDir + value.id + ".jpg");
 
             return value;
         });
