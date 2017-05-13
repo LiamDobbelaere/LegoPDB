@@ -5,7 +5,7 @@ const server = require("http").Server(app);
 const LegoDA = require("./LegoDA");
 const db = new LegoDA();
 
-server.listen(80);
+server.listen(8080);
 
 app.use(express.static(__dirname + "/public"));
 

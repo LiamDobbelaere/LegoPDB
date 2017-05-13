@@ -195,6 +195,15 @@ var categorySelection = [];
                 }
             });
 
+            $("#popup-colorscroll ul").empty();
+            loadedColors.forEach(function(item) {
+                $newLi = $("<li></li>");
+                $newLi.attr("style", "background-color: " + item.hex + ";");
+                $newLi.text(item.name);
+
+                $("#popup-colorscroll ul").append($newLi);
+            });
+
             $(".lego-color-picker").spectrum({
                 showAlpha: true,
                 showPalette: true,
