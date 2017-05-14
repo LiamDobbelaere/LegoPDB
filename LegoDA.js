@@ -1,12 +1,6 @@
 const jsonfile = require('jsonfile');
 const fs = require('fs');
-
-function BrickEntry(name, amount) {
-    return {
-        name: name,
-        amount: amount
-    }
-}
+const Color = require('./color');
 
 function LegoDA() {
     const fileName = "legodb.json";
@@ -41,8 +35,8 @@ function LegoDA() {
         });
     };
 
-    this.getCategories = function() {
-        return db.categories.sort(function(a, b) {
+    this.getCategories = function () {
+        return db.categories.sort(function (a, b) {
             var nameA = a.name.toUpperCase();
             var nameB = b.name.toUpperCase();
 
@@ -59,62 +53,64 @@ function LegoDA() {
         });
     };
 
-    this.Color = function(hexVal) { //define a Color class for the color objects
-        this.hex = hexVal;
-    };
-
-    this.constructColor = function(colorObj){
-        var hex = colorObj.hex.substring(1);
-        /* Get the RGB values to calculate the Hue. */
-        var r = parseInt(hex.substring(0, 2), 16) / 255;
-        var g = parseInt(hex.substring(2, 4), 16) / 255;
-        var b = parseInt(hex.substring(4, 6), 16) / 255;
-
-        /* Getting the Max and Min values for Chroma. */
-        var max = Math.max.apply(Math, [r, g, b]);
-        var min = Math.min.apply(Math, [r, g, b]);
-
-
-        /* Variables for HSV value of hex color. */
-        var chr = max - min;
-        var hue = 0;
-        var val = max;
-        var sat = 0;
-
-
-        if (val > 0) {
-            /* Calculate Saturation only if Value isn't 0. */
-            sat = chr / val;
-            if (sat > 0) {
-                if (r == max) {
-                    hue = 60 * (((g - min) - (b - min)) / chr);
-                    if (hue < 0) {
-                        hue += 360;
-                    }
-                } else if (g == max) {
-                    hue = 120 + 60 * (((b - min) - (r - min)) / chr);
-                } else if (b == max) {
-                    hue = 240 + 60 * (((r - min) - (g - min)) / chr);
-                }
-            }
-        }
-        colorObj.chroma = chr;
-        colorObj.hue = hue;
-        colorObj.sat = sat;
-        colorObj.val = val;
-        colorObj.luma = 0.3 * r + 0.59 * g + 0.11 * b;
-        colorObj.red = parseInt(hex.substring(0, 2), 16);
-        colorObj.green = parseInt(hex.substring(2, 4), 16);
-        colorObj.blue = parseInt(hex.substring(4, 6), 16);
-        return colorObj;
-    };
-
-    this.getColors = function() {
-        return db.colors.sort(function(a, b) {
-            var aObj = self.constructColor(new self.Color(a.hex));
-            var bObj = self.constructColor(new self.Color(b.hex));
+    this.getColors = function () {
+        return db.colors.sort(function (a, b) {
+            var aObj = new Color(a.hex);
+            var bObj = new Color(b.hex);
 
             return aObj.hue - bObj.hue;
+        });
+    };
+
+    this.getSimpleColors = function () {
+        return db.simplecolors;
+    };
+
+    this.addToStock = function (stockEntry) {
+        var filteredStock = db.stock.find(function (existingStockItem) {
+            return existingStockItem.partid == stockEntry.partid;
+        });
+
+        if (filteredStock === undefined) {
+            db.stock.push(stockEntry);
+        } else {
+            stockEntry.simplequantities.forEach(function (colorEntry) {
+                var existingEntry = filteredStock.simplequantities.find(function (existingColor) {
+                    return existingColor.colorid == colorEntry.colorid;
+                });
+
+                if (existingEntry === undefined) {
+                    filteredStock.simplequantities.push(colorEntry);
+                } else {
+                    existingEntry.quantity += colorEntry.quantity;
+                }
+            });
+        }
+
+        self.save();
+    };
+
+    this.getStock = function() {
+        return db.stock.map(function(stockEntry) {
+            stockEntry.brick = db.parts.find(function(part) {
+                return part.id == stockEntry.partid;
+            });
+
+            console.log(stockEntry.partid);
+
+            stockEntry.simplequantities = stockEntry.simplequantities.map(function (quantity) {
+                quantity.color = db.colors.find(function(color) {
+                    return color.id == quantity.colorid;
+                });
+
+                return quantity;
+            });
+
+            stockEntry.totalcount = stockEntry.simplequantities.reduce(function(acc, cur) {
+                return acc + cur.quantity;
+            }, 0);
+
+            return stockEntry;
         });
     };
 

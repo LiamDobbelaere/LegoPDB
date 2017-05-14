@@ -1,65 +1,125 @@
-var categorySelection = [];
-
-(function() {
+(function () {
+    var categorySelection = [];
     var loadedColors = [];
 
-    $(function() {
-        var options = {
-            url: function(q) {
-                return "/search?q=" + q + "&c=" + JSON.stringify(categorySelection);
-            },
-            getValue: "name",
-            template: {
-                type: "custom",
-                method: function(value, item) {
-                    var backgroundStyle = "url(" + "assets/media/brickdb/" + item.id + ".jpg)";
+    const easyAutocompleteDefaults = {
+        getValue: "name",
+        template: {
+            type: "custom",
+            method: legoListItemTemplate
+        },
+        list: {
+            maxNumberOfElements: 10
+        },
+        highlightPhrase: false,
+        requestDelay: 200,
+        placeholder: "brick 2x2"
+    };
 
-                    if (!item.hasImage) {
-                        backgroundStyle = ""; //Prevent spamming get requests for images that don't exist
-                    }
+    $(function () {
+        $("#search-parts").easyAutocomplete(new EasyAutocompleteOptions(easyAutocompleteDefaults, function (q) {
+            return "/api/search?q=" + q + "&c=" + JSON.stringify(categorySelection);
+        }, partSearchClickhandler));
 
-                    return "<span class='acitem' style='background-image:" + backgroundStyle + "'>"
-                        + item.name + " <span class='listpartid'>(" + item.id + ")</span>" + " <span class='listcategory'>" + item.category + "</span></span>";
-                }
-            },
-            list: {
-                onClickEvent: function() {
-                    console.log($("#search").getSelectedItemData());
-                },
-                maxNumberOfElements: 10
-            },
-            highlightPhrase: false,
-            requestDelay: 200
-        };
-
-        $("#search").easyAutocomplete(options);
-        updateColorpickers();
+        //Generic popup handler
         $("[data-popupid]").on("click", togglePopup);
-        $("#popup-categories").find(".btn-all").on("click", selectAllCategories);
-        $("#popup-categories").find(".btn-none").on("click", deselectAllCategories);
 
+        $("#popup-categories").find(".btn.all").on("click", selectAllCategories).parent()
+            .find(".btn.none").on("click", deselectAllCategories);
+        $(".add-part-button").on("click", initializeAddPart);
+        $("#add-part-confirm").on("click", addPartToStock);
+
+        updateColorpickers();
         updateCategories();
-
-        updateGridview([
-            {
-                name: "2x2",
-                amount: 20
-            },
-            {
-                name: "1x2",
-                amount: 10
-            }
-        ])
+        updateGridview();
     });
 
-    function updateGridview(blockArray) {
-        $(".gridview").find(".gbrick").remove();
+    //Small helper function for making autocomplete options
+    function EasyAutocompleteOptions(defaults, queryFunction, clickHandler) {
+        var out = $.extend(true, {}, defaults);
 
-        $.each(blockArray, function(index, blockData) {
-            $(".gridview").append(createGridviewItem(blockData));
+        out.url = queryFunction;
+        out.list.onClickEvent = clickHandler;
+
+        return out;
+    }
+
+    //Click handler for when you select a part in the search for the add part popup
+    function partSearchClickhandler() {
+        var selectedBrick = $("#search-parts").getSelectedItemData();
+        var backgroundStyle = "url(" + "assets/media/brickdb/" + selectedBrick.id + ".jpg)";
+
+        if (!selectedBrick.hasImage) {
+            backgroundStyle = ""; //Prevent spamming get requests for images that don't exist
+        }
+        
+        $("#brick-display-small").show().css("background-image", backgroundStyle)
+            .find(".part-name").text(selectedBrick.name).parent().find(".part-number").text(selectedBrick.id).parent().show();
+
+        $("#add-part-confirm").show();
+    }
+
+    //Item template to use for the autocomplete list (used in the default easyautocomplete options)
+    function legoListItemTemplate(value, part) {
+
+        var backgroundStyle = "url(" + "assets/media/brickdb/" + part.id + ".jpg)";
+
+        if (!part.hasImage) {
+            backgroundStyle = ""; //Prevent spamming get requests for images that don't exist
+        }
+
+        return "<span class='acitem' style='background-image:" + backgroundStyle + "'>"
+            + part.name + " <span class='listpartid'>(" + part.id + ")</span>" +
+            " <span class='listcategory'>" + part.category + "</span></span>";
+    }
+
+    //Resets some values for when you open the add part popup
+    function initializeAddPart() {
+        $("#search-parts").val("").focus();
+        $("#add-part-quantity").val("1");
+        $("#add-part-confirm").hide();
+        $("#brick-display-small").hide();
+    }
+
+    //Confirmation button in the add part popup
+    function addPartToStock() {
+        var selection = {
+            id: $("#popup-addpart").find(".part-number").text(),
+            colorid: colorLookup($(".lego-color-picker").val()).id,
+            amount: parseInt($("#add-part-quantity").val())
+        };
+
+        var newStockEntry = new lego.StockEntry(selection.id);
+        newStockEntry.simplequantities.push(new lego.SimpleQuantity(selection.colorid, selection.amount));
+
+        $.ajax({
+            method: "GET",
+            url: "/api/stock/add",
+            data: {
+                data: JSON.stringify(newStockEntry)
+            }
+        }).done(function (data) {
+            $("#popup-addpart").hide();
+            updateGridview();
         });
     }
 
+    //Updates the stock overview
+    function updateGridview() {
+        $(".gridview").find(".gbrick").remove();
+
+        $.ajax({
+            method: "GET",
+            url: "/api/stock/get"
+        }).done(function(stockArray) {
+            $.each(stockArray, function (index, stockItem) {
+                $(".gridview").append(createGridviewItem(stockItem));
+            });
+        });
+    }
+
+    //Updates the category list with categories from the server, also remembers the selected categories
+    //NOTE: The selection is inverse, meaning any categories in the categorySelection array are EXCLUDED from the search
     function updateCategories() {
         $("#popup-categories").find(".content").empty();
 
@@ -73,20 +133,20 @@ var categorySelection = [];
         }
 
         $.ajax({
-            url: "/categories",
+            url: "/api/categories",
             method: "GET"
-        }).done(function(data) {
-            data.forEach(function(item) {
+        }).done(function (data) {
+            data.forEach(function (category) {
                 $newInput = $("<input/>");
                 $newInput.attr("type", "checkbox");
-                $newInput.attr("id", "category-" + item.id);
-                $newInput.attr("name", item.name);
-                $newInput.attr("data-category", item.id);
-                if ($.inArray(item.id, categorySelection) == -1) $newInput.attr("checked", "checked");
+                $newInput.attr("id", "category-" + category.id);
+                $newInput.attr("name", category.name);
+                $newInput.attr("data-category", category.id);
+                if ($.inArray(category.id, categorySelection) == -1) $newInput.attr("checked", "checked");
 
                 $newLabel = $("<label></label>");
-                $newLabel.attr("for", "category-" + item.id);
-                $newLabel.text(item.name);
+                $newLabel.attr("for", "category-" + category.id);
+                $newLabel.text(category.name);
 
                 $fieldSet = $("<fieldset></fieldset>");
 
@@ -98,13 +158,45 @@ var categorySelection = [];
                 $("#popup-categories").find(".content").append($fieldSet);
             })
         });
-
-        /*
-         <input type="checkbox" id="name" name="name"/>
-         <label for="name">Name</label>
-         */
     }
 
+    //Updates the colorpickers on the page for picking lego colors
+    function updateColorpickers() {
+        $.ajax({
+            method: "GET",
+            url: "/api/simplecolors"
+        }).done(function (data) {
+            var colorIds = [];
+            var colorValues = [];
+
+            loadedColors = data;
+
+            data.forEach(function (color) {
+                colorIds.push(color.id);
+
+                if (color.transparent) {
+                    colorValues.push("#ac" + color.hex.substring(1));
+                } else {
+                    colorValues.push(color.hex);
+                }
+            });
+
+            $(".lego-color-picker").spectrum({
+                showAlpha: true,
+                showPalette: true,
+                showPaletteOnly: true,
+                allowEmpty: false,
+                preferredFormat: "hex",
+                color: colorValues[0],
+                palette: [colorValues],
+                change: function (color) {
+                    $(".lego-color-picker").spectrum("hide");
+                }
+            });
+        });
+    }
+
+    //Triggers when a category is changed, used for modifying the category selection array
     function changedCategory(e) {
         var categoryNum = parseInt($(this).attr("data-category"));
 
@@ -121,30 +213,33 @@ var categorySelection = [];
         saveCategories();
     }
 
+    //Simple method but used in multiple places
     function saveCategories() {
         localStorage.setItem("categories", JSON.stringify(categorySelection));
     }
 
-    function createGridviewItem(blockData) {
+    //Makes a gridview item for the stock
+    function createGridviewItem(stockItem) {
         $newItem = $("<a></a>");
         $newItem.addClass("gbrick");
         $newItem.attr("href", "#");
 
         $newItemThumb = $("<section></section>");
         $newItemThumb.addClass("gbrick-thumb");
+        $newItemThumb.css("background-image", "url('assets/media/brickdb/" + stockItem.brick.id + ".jpg')");
 
         $newItemThumbAmount = $("<span></span>");
         $newItemThumbAmount.addClass("gbrick-amount");
-        $newItemThumbAmount.text(blockData.amount);
+        $newItemThumbAmount.text(stockItem.totalcount);
         $newItemThumb.append($newItemThumbAmount);
 
         $brickName = $("<span></span>");
         $brickName.addClass("gbrick-sub");
-        $brickName.text(blockData.name);
+        $brickName.text(stockItem.brick.name);
 
         $brickPartNum = $("<span></span>");
         $brickPartNum.addClass("gbrick-sub");
-        $brickPartNum.text(blockData.name);
+        $brickPartNum.text(stockItem.brick.id);
 
         $newItem.append($newItemThumb);
         $newItem.append($brickName);
@@ -155,9 +250,9 @@ var categorySelection = [];
 
     function togglePopup() {
         if ($(this).attr("data-popupmode") == "show") {
-            $($(this).attr("data-popupid")).show();
+            $("#" + $(this).attr("data-popupid")).show();
         } else {
-            $($(this).attr("data-popupid")).hide();
+            $("#" + $(this).attr("data-popupid")).hide();
         }
     }
 
@@ -169,61 +264,22 @@ var categorySelection = [];
 
     function deselectAllCategories() {
         $("#popup-categories").find(".content").find("input").prop("checked", false);
-        $.each($("#popup-categories").find(".content").find("input"), function(index, value) {
+        $.each($("#popup-categories").find(".content").find("input"), function (index, value) {
             categorySelection.push(parseInt($(value).attr("data-category")));
         });
         saveCategories();
     }
 
-    function updateColorpickers() {
-        $.ajax({
-            method: "GET",
-            url: "/colors"
-        }).done(function (data) {
-            var colorIds = [];
-            var colorValues = [];
+    //Checks which color object a certain hex code matches
+    function colorLookup(hex) {
+        var out = null;
 
-            loadedColors = data;
-
-            data.forEach(function(item) {
-                colorIds.push(item.id);
-
-                if (item.transparent) {
-                    colorValues.push("#ac" + item.hex.substring(1));
-                } else {
-                    colorValues.push(item.hex);
-                }
-            });
-
-            $("#popup-colorscroll ul").empty();
-            loadedColors.forEach(function(item) {
-                $newLi = $("<li></li>");
-                $newLi.attr("style", "background-color: " + item.hex + ";");
-                $newLi.text(item.name);
-
-                $("#popup-colorscroll ul").append($newLi);
-            });
-
-            $(".lego-color-picker").spectrum({
-                showAlpha: true,
-                showPalette: true,
-                showPaletteOnly: true,
-                allowEmpty: false,
-                preferredFormat: "hex",
-                color: colorValues[0],
-                palette: [colorValues],
-                change: function(color) {
-                    loadedColors.forEach(function(item) {
-                        var transparentMatch = (color._a < 1 && item.transparent) ||  (color._a > 0.99 && !item.transparent);
-
-                        if (item.hex.toLowerCase() == color.toHexString().toLowerCase() && transparentMatch) {
-                            console.log(item.name);
-                        }
-                    });
-                }
-            });
-
-            console.log($(".lego-color-picker").spectrum("get"));
+        loadedColors.forEach(function (color) {
+            if (color.hex.toLowerCase() == hex.toLowerCase()) {
+                out = color;
+            }
         });
+
+        return out;
     }
 })();

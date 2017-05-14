@@ -16,66 +16,56 @@
     <header>
         <h1>Lego® Parts Database</h1>
         <h2>Overview</h2>
-        <input type='text' class="lego-color-picker" />
     </header>
 
     <main>
         <form class="cf search">
             <fieldset>
-                <input type="text" id="search-stock" class="searchbox" name="search-stock"/>
+                <input type="text" id="search-stock"/>
             </fieldset>
         </form>
 
         <section class="gridview">
-            <a href="#" class="add-button" data-popupid="#popup-addpart" data-popupmode="show"></a>
-            <a href="#" class="gbrick">
-                <section class="gbrick-thumb">
-                    <span class="gbrick-amount">123456</span>
-                </section>
-                <span class="gbrick-sub">2x2</span>
-                <span class="gbrick-sub">test</span>
-            </a>
+            <a href="#" class="add-part-button" data-popupid="popup-addpart" data-popupmode="show"></a>
         </section>
 
-        <a href="#" id="add-button-mobile">
-        </a>
+        <a href="#" class="add-part-button mobile" data-popupid="popup-addpart" data-popupmode="show"></a>
     </main>
 
     <div class="popup" id="popup-categories" style="display: none">
         <div class="header">Categories
-            <a href="#" class="btn-all">All</a>
-            <a href="#" class="btn-none">None</a>
-            <a href="#" data-popupmode="hide" data-popupid="#popup-categories" class="btn-close">Close</a>
+            <a href="#" class="btn all">All</a>
+            <a href="#" class="btn none">None</a>
+            <a href="#" class="btn close" data-popupmode="hide" data-popupid="popup-categories">Close</a>
         </div>
         <div class="content">
-            <input type="checkbox" id="name" name="name"/>
-            <label for="name">Name</label>
+
         </div>
     </div>
 
     <div class="popup" id="popup-addpart" style="display: none">
         <div class="header">Add to stock
-            <a href="#" data-popupmode="hide" data-popupid="#popup-addpart" class="btn-close">Close</a>
+            <a href="#" class="btn close" data-popupmode="hide" data-popupid="popup-addpart">Close</a>
         </div>
         <div class="content">
+            <h2>Search</h2>
             <form class="cf search">
-                <a href="#" data-popupid="#popup-categories" data-popupmode="show">Categories..</a>
+                <a href="#" data-popupid="popup-categories" data-popupmode="show">Categories..</a>
                 <fieldset>
-                    <input type="text" id="search" class="searchbox" name="search"/>
+                    <input type="text" id="search-parts"/>
                 </fieldset>
-            </form>
-        </div>
-    </div>
 
-    <div class="popup" id="popup-colorscroll">
-        <div class="header">Color helper
-            <a href="#" data-popupmode="hide" data-popupid="#popup-colorscroll" class="btn-close">Close</a>
-        </div>
-        <div class="content">
-            <ul>
-                <li></li>
-                <li></li>
-            </ul>
+                <div id="brick-display-small" style='background-image: url("assets/media/brickdb/3003.jpg")'>
+                    <span class="part-name"></span>
+                    <span class="part-number"></span>
+                </div>
+
+                <h2>Color and quantity</h2>
+                <input type='text' class="lego-color-picker" />
+                <input type="number" id="add-part-quantity" value="1" min="1"/>
+
+                <a href="#" class="btn big" id="add-part-confirm">Add part</a>
+            </form>
         </div>
     </div>
 
@@ -86,6 +76,7 @@
 
 <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="assets/js/jquery.easy-autocomplete.min.js"></script>
+<script type="text/javascript" src="assets/js/shared/lego.js"></script>
 <script type="text/javascript" src="assets/js/spectrum.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
 </body>

@@ -26,6 +26,7 @@ h2 {
     color: #A00;
     font-size: 18px;
     font-weight: bold;
+    margin-bottom: 8px;
 }
 
 a, a:visited {
@@ -110,7 +111,7 @@ footer {
     margin-right: auto;
 }
 
-.gridview a, .add-button {
+.gridview a, .add-part-button {
     width: 92px;
     height: 132px;
     background-color: #A00;
@@ -121,7 +122,7 @@ footer {
     margin-right: 8px;
 }
 
-#add-button-mobile {
+.add-part-button.mobile {
     width: 48px;
     height: 48px;
     background-color: black;
@@ -139,11 +140,11 @@ footer {
     background-position: center;
 }
 
-#add-button-mobile:hover {
+.add-part-button.mobile:hover {
     background-color: #A00;
 }
 
-.gridview .add-button {
+.gridview .add-part-button {
     border: 2px dashed #A00;
     background-color: white;
     display: none;
@@ -238,7 +239,6 @@ footer {
     background-color: lightgray;
     box-shadow: 0 0 16px 1px black;
     border: 1px solid black;
-    opacity: 0.92;
 }
 
 .popup .content {
@@ -259,7 +259,7 @@ footer {
     padding-left: 8px;
 }
 
-.popup a {
+.popup .btn {
     background-color: white;
     margin-left: 8px;
     font-size: 14px;
@@ -289,7 +289,7 @@ input[type=checkbox] + label {
     font-style: italic;
 }
 
-.btn-close {
+.btn.close {
     float: right;
 }
 
@@ -305,7 +305,6 @@ input[type=checkbox] + label {
     margin-top: 0;
     top: 0;
     left: 0;
-    opacity: 1;
     background-color: black;
 }
 
@@ -326,12 +325,44 @@ input[type=checkbox] + label {
 
 }
 
+#popup-addpart #add-part-quantity {
+    display: inline-block;
+    width: 100px;
+}
+
+#brick-display-small {
+    height: 100px;
+    background-size: contain;
+    background-position: right;
+    background-repeat: no-repeat;
+}
+
+#brick-display-small span {
+    display: block;
+}
+
+.popup a.btn.big {
+    display: block;
+    height: 32px;
+    background-color: #A00;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    line-height: 32px;
+    font-weight: bold;
+    margin-top: 16px;
+}
+
+.popup a.btn.big:hover {
+    background-color: #900;
+}
+
 @media screen and (min-width: 415px) {
-    .gridview .add-button {
+    .gridview .add-part-button {
         display: inline-block;
     }
 
-    #add-button-mobile {
+    .add-part-button.mobile {
         bottom: 100%;
         right: 100%;
     }
