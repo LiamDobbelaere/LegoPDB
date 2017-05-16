@@ -1,6 +1,9 @@
 (function () {
     var categorySelection = [];
     var loadedColors = [];
+    var appKey = "BKbomCGPq7yccqCqXPyk89RWOoJhIDKYmzf4HYSa1Y3kOGUrxilzUPgoB3_u5d1scSbWomDko6RlwLViTdcp44Q";
+    var swReg;
+    var isSubscribed;
 
     const easyAutocompleteDefaults = {
         getValue: "name",
@@ -32,7 +35,120 @@
         updateColorpickers();
         updateCategories();
         updateGridview();
+
+        setupServiceworker();
     });
+
+
+    function setupServiceworker() {
+        if ("serviceWorker" in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.register("sw.js", {scope: './'})
+                .then((r) => {
+                    console.log("Service worker registered");
+
+                    swReg = r;
+                    initUI();
+                }).catch(console.error);
+        } else {
+            console.warn("Push not supported");
+            $("#push-button").text("Notifications not available");
+        }
+    }
+
+    function initUI() {
+        $("#push-button").on("click", (e) => {
+            e.preventDefault();
+
+            if ($("#push-button").attr("data-disabled") == "no") {
+                $("#push-button").attr("data-disabled", "yes");
+
+                if (isSubscribed) unsubscribe(); else subscribe();
+            }
+        });
+
+        swReg.pushManager.getSubscription()
+            .then(function (subscription) {
+                isSubscribed = !(subscription === null);
+
+                if (isSubscribed) {
+                    console.log("User is subscribed");
+                } else {
+                    console.log("User is not subscribed");
+                }
+
+                updateUI();
+            });
+    }
+
+    function updateUI() {
+        if (Notification.permission === 'denied') {
+            $("#push-button").text("Notifications blocked");
+            $("#push-button").attr("data-disabled", "yes");
+
+            return;
+        }
+
+        if (isSubscribed) {
+            $("#push-button").text("Disable notifications");
+        } else {
+            $("#push-button").text("Enable notifications");
+        }
+
+        $("#push-button").attr("data-disabled", "no");
+    }
+
+    function urlB64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+
+        return outputArray;
+    }
+
+    function subscribe() {
+        const applicationServerKey = urlB64ToUint8Array(appKey);
+        swReg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: applicationServerKey
+        })
+            .then(function (subscription) {
+                console.log('User is subscribed.');
+
+                isSubscribed = true;
+
+                updateUI();
+            })
+            .catch(function (err) {
+                console.log('Failed to subscribe the user: ', err);
+                updateUI();
+            });
+    }
+
+    function unsubscribe() {
+        swReg.pushManager.getSubscription()
+            .then(function (subscription) {
+                if (subscription) {
+                    return subscription.unsubscribe();
+                }
+            })
+            .catch(function (error) {
+                console.log('Error unsubscribing', error);
+            })
+            .then(function () {
+                console.log('User is unsubscribed.');
+                isSubscribed = false;
+
+                updateUI();
+            });
+    }
 
     //Small helper function for making autocomplete options
     function EasyAutocompleteOptions(defaults, queryFunction, clickHandler) {
@@ -52,7 +168,7 @@
         if (!selectedBrick.hasImage) {
             backgroundStyle = ""; //Prevent spamming get requests for images that don't exist
         }
-        
+
         $("#brick-display-small").show().css("background-image", backgroundStyle)
             .find(".part-name").text(selectedBrick.name).parent().find(".part-number").text(selectedBrick.id).parent().show();
 
@@ -111,7 +227,7 @@
         $.ajax({
             method: "GET",
             url: "/api/stock/get"
-        }).done(function(stockArray) {
+        }).done(function (stockArray) {
             $.each(stockArray, function (index, stockItem) {
                 $(".gridview").append(createGridviewItem(stockItem));
             });
