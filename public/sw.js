@@ -1,4 +1,4 @@
-const version = 26;
+const version = 27;
 
 self.addEventListener("install", function (e) {
     console.log("LegoPDB SW v%s installed at ", version, new Date().toLocaleTimeString());
@@ -47,8 +47,8 @@ self.addEventListener("push", function(e) {
     const title = "Lego PDB";
     const options = {
         body: "Some bricks could use restocking",
-        icon: "/assets/media/pushicon.jpg",
-        badge: "/assets/media/pushicon.jpg"
+        icon: "/assets/media/pushicon.png",
+        badge: "/assets/media/pushicon.png"
     };
 
     e.waitUntil(self.registration.showNotification(title, options));
