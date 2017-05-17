@@ -5,7 +5,7 @@ const LegoDA = require("./LegoDA");
 const db = new LegoDA();
 var lego = require("./public/assets/js/shared/lego.js");
 
-server.listen(8080);
+server.listen(80);
 
 app.use(express.static(__dirname + "/public"));
 
