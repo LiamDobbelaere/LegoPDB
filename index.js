@@ -40,7 +40,7 @@ function routinePush() {
 }
 
 server.listen(80);
-setInterval(routinePush, 1000 * 60);
+setInterval(routinePush, 1000 * 60 * 60);
 
 app.use(express.static(__dirname + "/public"));
 

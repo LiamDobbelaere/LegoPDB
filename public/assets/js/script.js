@@ -396,7 +396,7 @@
     }
 
     function showPartDetails(partData) {
-        $("#popup-partdetails").find("h2:first").text(partData.partid + " -" + partData.brick.name);
+        $("#popup-partdetails").find("h2:first").text(partData.partid + " - " + partData.brick.name);
         $("#popup-partdetails").find(".pd-category").text(partData.brick.category);
         $("#popup-partdetails").find("img").attr("src", "assets/media/brickdb/" + partData.partid + ".jpg");
         $("#popup-partdetails").find(".pd-colors").empty();
