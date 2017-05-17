@@ -31,6 +31,7 @@
             .find(".btn.none").on("click", deselectAllCategories);
         $(".add-part-button").on("click", initializeAddPart);
         $("#add-part-confirm").on("click", addPartToStock);
+        $("#delete-part").on("click", deletePart);
 
         updateColorpickers();
         updateCategories();
@@ -39,6 +40,19 @@
         setupServiceworker();
     });
 
+    function deletePart() {
+        var partId = $(this).attr("data-partid");
+
+        $.ajax({
+            method: "GET",
+            url: "/api/stock/delete",
+            data: {
+                partid: partId
+            }
+        }).done(function (response) {
+            updateGridview();
+        });
+    }
 
     function setupServiceworker() {
         if ("serviceWorker" in navigator && 'PushManager' in window) {
@@ -319,6 +333,8 @@
                     $(".lego-color-picker").spectrum("hide");
                 }
             });
+
+            $(".lego-color-picker").val(colorValues[0]);
         });
     }
 
@@ -349,6 +365,7 @@
         $newItem = $("<a></a>");
         $newItem.addClass("gbrick");
         $newItem.attr("href", "#");
+        $newItem.attr("data-brickdata", JSON.stringify(stockItem));
 
         $newItemThumb = $("<section></section>");
         $newItemThumb.addClass("gbrick-thumb");
@@ -371,7 +388,33 @@
         $newItem.append($brickName);
         $newItem.append($brickPartNum);
 
+        $newItem.on("click", function() {
+            showPartDetails(JSON.parse($(this).attr("data-brickdata")));
+        });
+
         return $newItem;
+    }
+
+    function showPartDetails(partData) {
+        $("#popup-partdetails").find("h2:first").text(partData.partid + " -" + partData.brick.name);
+        $("#popup-partdetails").find(".pd-category").text(partData.brick.category);
+        $("#popup-partdetails").find("img").attr("src", "assets/media/brickdb/" + partData.partid + ".jpg");
+        $("#popup-partdetails").find(".pd-colors").empty();
+        $("#delete-part").attr("data-partid", partData.partid);
+
+        partData.simplequantities.forEach(function(quantityObject) {
+            $newLi = $("<li></li>");
+            $colorBlock = $("<span class='color-block'></span>");
+
+            console.log(quantityObject.colorid);
+            $colorBlock.css("background-color", loadedColors[quantityObject.colorid] .hex);
+            $newLi.append($colorBlock);
+            $newLi.append(" " + quantityObject.quantity);
+
+            $("#popup-partdetails").find(".pd-colors").append($newLi);
+        });
+
+        $("#popup-partdetails").show();
     }
 
     function togglePopup() {

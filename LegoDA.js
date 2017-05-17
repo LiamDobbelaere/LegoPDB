@@ -90,13 +90,25 @@ function LegoDA() {
         self.save();
     };
 
+    this.removeFromStock = function(partid) {
+        var filteredStock = db.stock.find(function (existingStockItem) {
+            return existingStockItem.partid == partid;
+        });
+
+        var index = db.stock.indexOf(filteredStock);
+
+        if (index != -1) {
+            db.stock.splice(index, 1);
+        }
+
+        self.save();
+    };
+
     this.getStock = function() {
         return db.stock.map(function(stockEntry) {
             stockEntry.brick = db.parts.find(function(part) {
                 return part.id == stockEntry.partid;
             });
-
-            console.log(stockEntry.partid);
 
             stockEntry.simplequantities = stockEntry.simplequantities.map(function (quantity) {
                 quantity.color = db.colors.find(function(color) {

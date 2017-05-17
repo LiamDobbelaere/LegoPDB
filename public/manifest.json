@@ -2,7 +2,7 @@
   "name": "Lego Parts Database",
   "short_name": "LegoPDB",
   "lang": "en-US",
-  "start_url": "/overview.html",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#AA0000",
   "icons": [

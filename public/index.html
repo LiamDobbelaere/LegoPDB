@@ -5,6 +5,8 @@
     <meta name="author" content="Tom Dobbelaere"/>
     <link rel="stylesheet" type="text/css" href="assets/css/reset.css"/>
     <link rel="stylesheet" type="text/css" href="assets/css/screen.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/easy-autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/spectrum.css"/>
     <link rel="manifest" href="manifest.json">
 
     <meta name="mobile-web-app-capable" content="yes">
@@ -27,30 +29,79 @@
 <div id="container">
     <header>
         <h1>Lego® Parts Database</h1>
-        <h2>Login</h2>
+        <h2>Overview</h2>
+        <a href="#" id="push-button">Script not ready</a>
     </header>
 
     <main>
-        <form class="cf">
+        <form class="cf search">
             <fieldset>
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username"/>
+                <input type="text" id="search-stock"/>
             </fieldset>
-
-            <fieldset>
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password"/>
-            </fieldset>
-
-            <input type="submit" value="Login"/>
-
-            <p class="form-links">
-                <span><a href="#">Forgot password?</a></span>
-                <span>Don't have an account? <a href="#">Sign up</a></span>
-            </p>
         </form>
 
+        <section class="gridview">
+            <a href="#" class="add-part-button" data-popupid="popup-addpart" data-popupmode="show"></a>
+        </section>
+
+        <a href="#" class="add-part-button mobile" data-popupid="popup-addpart" data-popupmode="show"></a>
     </main>
+
+    <div class="popup" id="popup-categories" style="display: none">
+        <div class="header">Categories
+            <a href="#" class="btn all">All</a>
+            <a href="#" class="btn none">None</a>
+            <a href="#" class="btn close" data-popupmode="hide" data-popupid="popup-categories">Close</a>
+        </div>
+        <div class="content">
+
+        </div>
+    </div>
+
+    <div class="popup" id="popup-addpart" style="display: none">
+        <div class="header">Add to stock
+            <a href="#" class="btn close" data-popupmode="hide" data-popupid="popup-addpart">Close</a>
+        </div>
+        <div class="content">
+            <h2>Search</h2>
+            <form class="cf search">
+                <a href="#" data-popupid="popup-categories" data-popupmode="show">Categories..</a>
+                <fieldset>
+                    <input type="text" id="search-parts"/>
+                </fieldset>
+
+                <div id="brick-display-small" style='background-image: url("assets/media/brickdb/3003.jpg")'>
+                    <span class="part-name"></span>
+                    <span class="part-number"></span>
+                </div>
+
+                <h2>Color and quantity</h2>
+                <input type='text' class="lego-color-picker" />
+                <input type="number" id="add-part-quantity" value="1" min="1"/>
+
+                <a href="#" class="btn big" id="add-part-confirm">Add part</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="popup" id="popup-partdetails" style="display: none">
+        <div class="header">Part details
+            <a href="#" class="btn close" data-popupmode="hide" data-popupid="popup-partdetails">Close</a>
+        </div>
+        <div class="content">
+            <h2>1234 - Part Name</h2>
+            <p class="pd-category">Category</p>
+            <img src="assets/media/brickdb/3003.jpg"/>
+
+            <h2>Colors</h2>
+            <ul class="pd-colors">
+                <li><span class="color-block"></span> aa</li>
+            </ul>
+
+            <a href="#" class="btn big" id="delete-part" data-popupmode="hide" data-popupid="popup-partdetails" data-partid="">Delete</a>
+        </div>
+    </div>
+
 
     <footer>
         LEGO® is a trademark of the LEGO Group of companies which does not sponsor, authorize, or endorse this site
@@ -58,6 +109,9 @@
 </div>
 
 <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.easy-autocomplete.min.js"></script>
+<script type="text/javascript" src="assets/js/shared/lego.js"></script>
+<script type="text/javascript" src="assets/js/spectrum.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
 </body>
 </html>

@@ -374,6 +374,27 @@ input[type=checkbox] + label {
     font-size: 14px;
 }
 
+#popup-partdetails img {
+    width: 128px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.pd-category {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.color-block {
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border: 1px solid black;
+    display: inline-block;
+}
+
 @media screen and (min-width: 415px) {
     .gridview .add-part-button {
         display: inline-block;
