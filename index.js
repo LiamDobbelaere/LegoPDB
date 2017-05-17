@@ -6,9 +6,30 @@ const db = new LegoDA();
 const webpush = require('web-push');
 var lego = require("./public/assets/js/shared/lego.js");
 
+var subscriptions = [];
+
 //Push notifications stuff
 var appKey = "BEzvvM3fJQcuIPP05IPOqedt9xU3yjLyL2hUSB3fqjKMtS7_7WOTdoF9abEXyBWrl4Pc0vElFeW73ZKliHgPaPk";
 var privateKey = "VYSO68iEMGD3XXEs6WR11QhoN33lGTkZkR1jt99RCBk";
+
+setInterval(function() {
+    subscriptions.forEach(function(subscription) {
+        const options = {
+            TTL: 24 * 60 * 60,
+            vapidDetails: {
+                subject: 'mailto:tom.dobbelaere@outlook.com',
+                publicKey: appKey,
+                privateKey: privateKey
+            },
+        };
+
+        webpush.sendNotification(
+            subscription,
+            "Hoe da je met icons werkt",
+            options
+        );
+    });
+}, 1000);
 
 server.listen(80);
 
@@ -50,23 +71,5 @@ app.get("/api/stock/get", function(req, res, next) {
 
 app.get("/api/push/register", function(req, res, next) {
     var subscription = JSON.parse(req.query.data);
-
-    console.log(subscription);
-
-    setTimeout(function() {
-        const options = {
-            TTL: 24 * 60 * 60,
-            vapidDetails: {
-                subject: 'mailto:tom.dobbelaere@outlook.com',
-                publicKey: appKey,
-                privateKey: privateKey
-            },
-        };
-
-        webpush.sendNotification(
-            subscription,
-            "Hoe da je met icons werkt",
-            options
-        );
-    }, 5000);
+    subscriptions.push(subscription);
 });
