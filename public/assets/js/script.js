@@ -1,7 +1,7 @@
 (function () {
     var categorySelection = [];
     var loadedColors = [];
-    var appKey = "BKbomCGPq7yccqCqXPyk89RWOoJhIDKYmzf4HYSa1Y3kOGUrxilzUPgoB3_u5d1scSbWomDko6RlwLViTdcp44Q";
+    var appKey = "BEzvvM3fJQcuIPP05IPOqedt9xU3yjLyL2hUSB3fqjKMtS7_7WOTdoF9abEXyBWrl4Pc0vElFeW73ZKliHgPaPk";
     var swReg;
     var isSubscribed;
 
@@ -123,6 +123,16 @@
                 console.log('User is subscribed.');
 
                 isSubscribed = true;
+
+                $.ajax({
+                    method: "GET",
+                    url: "/api/push/register",
+                    data: {
+                        data: JSON.stringify(subscription)
+                    }
+                }).done(function (response) {
+                    console.log("Sent subscription to backend");
+                });
 
                 updateUI();
             })

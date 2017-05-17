@@ -23,6 +23,7 @@
     "async": "^2.4.0",
     "csvtojson": "^1.1.5",
     "express": "^4.15.2",
-    "jsonfile": "^3.0.0"
+    "jsonfile": "^3.0.0",
+    "web-push": "^3.2.2"
   }
 }
