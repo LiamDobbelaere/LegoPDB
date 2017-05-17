@@ -1,13 +1,7 @@
-const version = 8;
+const version = 26;
 
 self.addEventListener("install", function (e) {
     console.log("LegoPDB SW v%s installed at ", version, new Date().toLocaleTimeString());
-
-    e.waitUntil(
-        caches.open(version)
-            .then(function (cache) {
-                return cache.addAll(["offline.html"]);
-            }));
 });
 
 self.addEventListener("activate", function (e) {
@@ -22,19 +16,27 @@ self.addEventListener("activate", function (e) {
                     return caches.delete(key);
                 }));
             }));
+
+    e.waitUntil(
+        caches.open(version)
+            .then(function (cache) {
+                return cache.add('/offline.html');
+            }));
 });
 
 self.addEventListener("fetch", function (e) {
     e.respondWith(
         caches.match(e.request)
             .then(function (res) {
-                if (res)
-                    return res;
-
-                if (!navigator.onLine)
-                    return caches.match(new Request("/offline.html"));
-
-                return fetchAndUpdate(e.request);
+                //Always prefer online copies unless the browser is offline
+                if (!navigator.onLine) {
+                    if (res)
+                        return res;
+                    else
+                        return caches.match(new Request('/offline.html'));
+                } else {
+                    return fetchAndUpdate(e.request);
+                }
             }));
 });
 

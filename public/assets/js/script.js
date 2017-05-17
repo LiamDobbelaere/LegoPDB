@@ -42,7 +42,7 @@
 
     function setupServiceworker() {
         if ("serviceWorker" in navigator && 'PushManager' in window) {
-            navigator.serviceWorker.register("sw.js", {scope: './'})
+            navigator.serviceWorker.register("sw.js") //{scope: './'})
                 .then((r) => {
                     console.log("Service worker registered");
 
