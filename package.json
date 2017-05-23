@@ -4,7 +4,9 @@
   "description": "The backend for the Lego Parts Database",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha"
+    "test": "node_modules/.bin/mocha",
+    "prestart": "npm install",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
